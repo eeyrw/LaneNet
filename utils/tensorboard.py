@@ -2,11 +2,6 @@
 from torch.utils.tensorboard import SummaryWriter
 import numpy as np
 from PIL import Image
-import scipy.misc 
-try:
-    from StringIO import StringIO  # Python 2.7
-except ImportError:
-    from io import BytesIO         # Python 3.x
 
 
 class TensorBoard(object):
@@ -21,28 +16,9 @@ class TensorBoard(object):
 
     def image_summary(self, tag, images, step):
         """Log a list of images."""
-
-        img_summaries = []
         for i, img in enumerate(images):
-            # Write the image to a string
-            try:
-                s = StringIO()
-            except:
-                s = BytesIO()
-            # scipy.misc.toimage(img).save(s, format="png")
-            Image.fromarray(img).save(s, format='png')
+            self.writer.add_image('%s/%d' % (tag, i), img, global_step=step,  dataformats='HWC')
 
-
-            # Create an Image object
-            img_sum = tf.Summary.Image(encoded_image_string=s.getvalue(),
-                                       height=img.shape[0],
-                                       width=img.shape[1])
-            # Create a Summary value
-            img_summaries.append(tf.Summary.Value(tag='%s/%d' % (tag, i), image=img_sum))
-
-        # Create and write Summary
-        summary = tf.Summary(value=img_summaries)
-        self.writer.add_summary(summary, step)
         
     # def histo_summary(self, tag, values, step, bins=1000):
     #     """Log a histogram of the tensor of values."""
