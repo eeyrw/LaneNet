@@ -1,6 +1,6 @@
 Dataset_Path = dict(
-    CULane = "/home/lion/Dataset/CULane/data/CULane",
-    Tusimple = "/home/lion/Dataset/tusimple"
+    CULane = r"E:\CULane",
+    Tusimple = r"E:\tusimple"
 )
 
 Img_Size = dict(

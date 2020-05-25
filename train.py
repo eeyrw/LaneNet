@@ -48,7 +48,7 @@ transform_train = Compose(Resize(resize_shape), Darkness(5), Rotation(2),
 dataset_name = exp_cfg['dataset'].pop('dataset_name')
 Dataset_Type = getattr(dataset, dataset_name)
 train_dataset = Dataset_Type(Dataset_Path[dataset_name], "train", transform_train)
-train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_size'], shuffle=True, collate_fn=train_dataset.collate, num_workers=8)
+train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_size'], shuffle=True, collate_fn=train_dataset.collate, num_workers=1,pin_memory=True)
 
 # ------------ val data ------------
 transform_val = Compose(Resize(resize_shape), ToTensor(),
@@ -59,7 +59,7 @@ val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collat
 # ------------ preparation ------------
 net = LaneNet(pretrained=True, **exp_cfg['model'])
 net = net.to(device)
-net = torch.nn.DataParallel(net)
+# net = torch.nn.DataParallel(net)
 
 optimizer = optim.SGD(net.parameters(), **exp_cfg['optim'])
 lr_scheduler = PolyLR(optimizer, 0.9, exp_cfg['MAX_ITER'])
@@ -85,9 +85,9 @@ def train(epoch):
         output = net(img, segLabel)
         embedding = output['embedding']
         binary_seg = output['binary_seg']
-        seg_loss = output['seg_loss']
-        var_loss = output['var_loss']
-        dist_loss = output['dist_loss']
+        seg_loss = output['loss_seg']
+        var_loss = output['loss_var']
+        dist_loss = output['loss_dist']
         reg_loss = output['reg_loss']
         loss = output['loss']
         if isinstance(net, torch.nn.DataParallel):

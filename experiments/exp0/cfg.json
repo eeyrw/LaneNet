@@ -1,0 +1,17 @@
+{
+    "dataset": {
+        "resize_shape": [
+            300,
+            300
+        ],
+        "dataset_name": "CULane",
+        "batch_size": 1
+    },
+    "device": "cpu",
+    "model": {},
+    "optim": {
+        "lr": 0.01,
+        "momentum": 0.9
+    },
+    "MAX_ITER": 20000
+}

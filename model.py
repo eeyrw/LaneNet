@@ -59,7 +59,7 @@ class LaneNet(nn.Module):
             nn.Conv2d(32, 8, 3, padding=1, bias=False),
             nn.BatchNorm2d(8),
             nn.ReLU(),
-            nn.Upsample(scale_factor=8, mode='bilinear', align_corners=True)
+            nn.Upsample(scale_factor=8.10810811, mode='bilinear', align_corners=True)
         )
 
         # ----------------- embedding -----------------
@@ -101,6 +101,7 @@ class LaneNet(nn.Module):
             "loss_seg": seg_loss,
             "loss_var": var_loss,
             "loss_dist": dist_loss,
+            "reg_loss": reg_loss,
             "loss": loss
         }
 
