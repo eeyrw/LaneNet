@@ -44,7 +44,7 @@ if torch.cuda.is_available():
 else:
     device = "cpu"
 # device = torch.device(exp_cfg['device'])
-tensorboard = TensorBoard(exp_dir)
+tensorboard = TensorBoard(None)
 
 # ------------ train data ------------
 # # CULane mean, std
