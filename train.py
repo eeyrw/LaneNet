@@ -263,8 +263,11 @@ def main():
         start_epoch = 0
 
     for epoch in range(start_epoch, 100):
+        print("\nValidation For Experiment: ", exp_dir)
+        print(time.strftime('%H:%M:%S', time.localtime()))
+        val(epoch)
         train(epoch)
-        if epoch % 1 == 0 or epoch == 0:
+        if epoch % 1 == 0:
             print("\nValidation For Experiment: ", exp_dir)
             print(time.strftime('%H:%M:%S', time.localtime()))
             val(epoch)
