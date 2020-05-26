@@ -35,7 +35,15 @@ with open(os.path.join(exp_dir, "cfg.json")) as f:
     exp_cfg = json.load(f)
 resize_shape = tuple(exp_cfg['dataset']['resize_shape'])
 
-device = torch.device(exp_cfg['device'])
+    # reference maskrcnn-benchmark
+num_gpus = int(os.environ["WORLD_SIZE"]
+               ) if "WORLD_SIZE" in os.environ else 1
+
+if torch.cuda.is_available():
+    device = "cuda"
+else:
+    device = "cpu"
+# device = torch.device(exp_cfg['device'])
 tensorboard = TensorBoard(exp_dir)
 
 # ------------ train data ------------
