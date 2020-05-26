@@ -116,15 +116,15 @@ def train(epoch):
         progressbar.update(1)
 
         lr = optimizer.param_groups[0]['lr']
-        tensorboard.scalar_summary("train_loss", train_loss, epoch)
+        tensorboard.scalar_summary("train_loss", train_loss, iter_idx)
         tensorboard.scalar_summary(
             "train_loss_bin_seg", train_loss_bin_seg, epoch)
-        tensorboard.scalar_summary("train_loss_var", train_loss_var, epoch)
-        tensorboard.scalar_summary("train_loss_dist", train_loss_dist, epoch)
-        tensorboard.scalar_summary("train_loss_reg", train_loss_reg, epoch)
+        tensorboard.scalar_summary("train_loss_var", train_loss_var, iter_idx)
+        tensorboard.scalar_summary("train_loss_dist", train_loss_dist, iter_idx)
+        tensorboard.scalar_summary("train_loss_reg", train_loss_reg, iter_idx)
 
     progressbar.close()
-    tensorboard.writer.flush()
+    # tensorboard.writer.flush()
 
     if epoch % 1 == 0:
         save_dict = {
