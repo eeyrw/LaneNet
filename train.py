@@ -242,6 +242,7 @@ def val(epoch):
     if val_loss < best_val_loss:
         best_val_loss = val_loss
         save_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '.pth')
+        torch.save(net.state_dict(), save_name)
         copy_name = os.path.join(exp_dir, exp_dir.split('/')[-1] + '_best.pth')
         shutil.copyfile(save_name, copy_name)
 
