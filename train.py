@@ -23,6 +23,8 @@ def parse_args():
     parser.add_argument("--resume", "-r", action="store_true")
     args = parser.parse_args()
     return args
+
+
 args = parse_args()
 
 # ------------ config ------------
@@ -41,20 +43,23 @@ tensorboard = TensorBoard(exp_dir)
 # mean=(0.3598, 0.3653, 0.3662)
 # std=(0.2573, 0.2663, 0.2756)
 # Imagenet mean, std
-mean=(0.485, 0.456, 0.406)
-std=(0.229, 0.224, 0.225)
+mean = (0.485, 0.456, 0.406)
+std = (0.229, 0.224, 0.225)
 transform_train = Compose(Resize(resize_shape), Darkness(5), Rotation(2),
                           ToTensor(), Normalize(mean=mean, std=std))
 dataset_name = exp_cfg['dataset'].pop('dataset_name')
 Dataset_Type = getattr(dataset, dataset_name)
-train_dataset = Dataset_Type(Dataset_Path[dataset_name], "train", transform_train)
-train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_size'], shuffle=True, collate_fn=train_dataset.collate, num_workers=1,pin_memory=True)
+train_dataset = Dataset_Type(
+    Dataset_Path[dataset_name], "train", transform_train)
+train_loader = DataLoader(train_dataset, batch_size=exp_cfg['dataset']['batch_size'],
+                          shuffle=True, collate_fn=train_dataset.collate, num_workers=1, pin_memory=True)
 
 # ------------ val data ------------
 transform_val = Compose(Resize(resize_shape), ToTensor(),
                         Normalize(mean=mean, std=std))
 val_dataset = Dataset_Type(Dataset_Path[dataset_name], "val", transform_val)
-val_loader = DataLoader(val_dataset, batch_size=8, collate_fn=val_dataset.collate, num_workers=4)
+val_loader = DataLoader(val_dataset, batch_size=8,
+                        collate_fn=val_dataset.collate, num_workers=4)
 
 # ------------ preparation ------------
 net = LaneNet(pretrained=True, **exp_cfg['model'])
@@ -112,7 +117,8 @@ def train(epoch):
 
         lr = optimizer.param_groups[0]['lr']
         tensorboard.scalar_summary("train_loss", train_loss, epoch)
-        tensorboard.scalar_summary("train_loss_bin_seg", train_loss_bin_seg, epoch)
+        tensorboard.scalar_summary(
+            "train_loss_bin_seg", train_loss_bin_seg, epoch)
         tensorboard.scalar_summary("train_loss_var", train_loss_var, epoch)
         tensorboard.scalar_summary("train_loss_dist", train_loss_dist, epoch)
         tensorboard.scalar_summary("train_loss_reg", train_loss_reg, epoch)
@@ -153,13 +159,13 @@ def val(epoch):
             segLabel = sample['segLabel'].to(device)
 
             output = net(img, segLabel)
-			embedding = output['embedding']
-			binary_seg = output['binary_seg']
-			seg_loss = output['loss_seg']
-			var_loss = output['loss_var']
-			dist_loss = output['loss_dist']
-			reg_loss = output['reg_loss']
-			loss = output['loss']
+            embedding = output['embedding']
+            binary_seg = output['binary_seg']
+            seg_loss = output['loss_seg']
+            var_loss = output['loss_var']
+            dist_loss = output['loss_dist']
+            reg_loss = output['reg_loss']
+            loss = output['loss']
             if isinstance(net, torch.nn.DataParallel):
                 seg_loss = seg_loss.sum()
                 var_loss = var_loss.sum()
@@ -169,8 +175,9 @@ def val(epoch):
 
             # visualize validation every 5 frame, 50 frames in all
             gap_num = 5
-            if batch_idx%gap_num == 0 and batch_idx < 50 * gap_num:
-                color = np.array([[255, 125, 0], [0, 255, 0], [0, 0, 255], [0, 255, 255]], dtype='uint8') # bgr
+            if batch_idx % gap_num == 0 and batch_idx < 50 * gap_num:
+                color = np.array([[255, 125, 0], [0, 255, 0], [0, 0, 255], [
+                                 0, 255, 255]], dtype='uint8')  # bgr
                 display_imgs = []
                 embedding = embedding.detach().cpu().numpy()
                 bin_seg_prob = binary_seg.detach().cpu().numpy()
@@ -178,11 +185,11 @@ def val(epoch):
 
                 for b in range(len(img)):
                     img_name = sample['img_name'][b]
-                    img = cv2.imread(img_name) # BGR
+                    img = cv2.imread(img_name)  # BGR
                     img = cv2.resize(img, (800, 288))
 
                     bin_seg_img = np.zeros_like(img)
-                    bin_seg_img[bin_seg_pred[b]==1] = [0, 0, 255]
+                    bin_seg_img[bin_seg_pred[b] == 1] = [0, 0, 255]
 
                     # # ----------- cluster ---------------
                     # seg_img = np.zeros_like(img)
@@ -200,7 +207,8 @@ def val(epoch):
                     display_imgs.append(img)
                     display_imgs.append(bin_seg_img)
 
-                tensorboard.image_summary("img_{}".format(batch_idx), display_imgs, epoch)
+                tensorboard.image_summary(
+                    "img_{}".format(batch_idx), display_imgs, epoch)
 
             val_loss += loss.item()
             val_loss_bin_seg += seg_loss.item()
@@ -208,7 +216,8 @@ def val(epoch):
             val_loss_dist += dist_loss.item()
             val_loss_reg += reg_loss.item()
 
-            progressbar.set_description("batch loss: {:.3f}".format(loss.item()))
+            progressbar.set_description(
+                "batch loss: {:.3f}".format(loss.item()))
             progressbar.update(1)
 
     progressbar.close()
@@ -230,7 +239,8 @@ def val(epoch):
 def main():
     global best_val_loss
     if args.resume:
-        save_dict = torch.load(os.path.join(exp_dir, exp_dir.split('/')[-1] + '.pth'))
+        save_dict = torch.load(os.path.join(
+            exp_dir, exp_dir.split('/')[-1] + '.pth'))
         if isinstance(net, torch.nn.DataParallel):
             net.module.load_state_dict(save_dict['net'])
         else:
