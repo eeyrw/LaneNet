@@ -153,13 +153,13 @@ def val(epoch):
             segLabel = sample['segLabel'].to(device)
 
             output = net(img, segLabel)
-            embedding = output['embedding']
-            binary_seg = output['binary_seg']
-            seg_loss = output['seg_loss']
-            var_loss = output['var_loss']
-            dist_loss = output['dist_loss']
-            reg_loss = output['reg_loss']
-            loss = output['loss']
+			embedding = output['embedding']
+			binary_seg = output['binary_seg']
+			seg_loss = output['loss_seg']
+			var_loss = output['loss_var']
+			dist_loss = output['loss_dist']
+			reg_loss = output['reg_loss']
+			loss = output['loss']
             if isinstance(net, torch.nn.DataParallel):
                 seg_loss = seg_loss.sum()
                 var_loss = var_loss.sum()
