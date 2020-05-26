@@ -92,6 +92,7 @@ class LaneNet(nn.Module):
             var_loss = torch.tensor(0, dtype=img.dtype, device=img.device)
             dist_loss = torch.tensor(0, dtype=img.dtype, device=img.device)
             seg_loss = torch.tensor(0, dtype=img.dtype, device=img.device)
+            reg_loss = torch.tensor(0, dtype=img.dtype, device=img.device)
 
         loss = seg_loss * self.scale_seg + var_loss * self.scale_var + dist_loss * self.scale_dist
 

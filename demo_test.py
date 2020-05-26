@@ -9,7 +9,7 @@ from utils.postprocess import *
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--img_path", '-i', type=str, default="demo/demo.jpg", help="Path to demo img")
-    parser.add_argument("--weight_path", '-w', type=str, help="Path to model weights")
+    parser.add_argument("--weight_path", '-w', type=str, default="exp0.pth", help="Path to model weights")
     parser.add_argument("--band_width", '-b', type=float, default=1.5, help="Value of delta_v")
     parser.add_argument("--visualize", '-v', action="store_true", default=False, help="Visualize the result")
     args = parser.parse_args()
@@ -36,7 +36,7 @@ def main():
 
     net = LaneNet(pretrained=False, embed_dim=4, delta_v=.5, delta_d=3.)
     save_dict = torch.load(weight_path, map_location='cpu')
-    net.load_state_dict(save_dict['net'])
+    net.load_state_dict(save_dict)
     net.eval()
 
     output = net(x)
