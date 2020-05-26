@@ -107,21 +107,23 @@ def train(epoch):
         lr_scheduler.step()
 
         iter_idx = epoch * len(train_loader) + batch_idx
-        train_loss += loss.item()
-        train_loss_bin_seg += seg_loss.item()
-        train_loss_var += var_loss.item()
-        train_loss_dist += dist_loss.item()
-        train_loss_reg += reg_loss.item()
+        train_loss = loss.item()
+        train_loss_bin_seg = seg_loss.item()
+        train_loss_var = var_loss.item()
+        train_loss_dist = dist_loss.item()
+        train_loss_reg = reg_loss.item()
         progressbar.set_description("batch loss: {:.3f}".format(loss.item()))
         progressbar.update(1)
 
         lr = optimizer.param_groups[0]['lr']
-        tensorboard.scalar_summary("train_loss", train_loss, iter_idx)
+        tensorboard.scalar_summary("train/loss", train_loss, iter_idx)
         tensorboard.scalar_summary(
-            "train_loss_bin_seg", train_loss_bin_seg, iter_idx)
-        tensorboard.scalar_summary("train_loss_var", train_loss_var, iter_idx)
-        tensorboard.scalar_summary("train_loss_dist", train_loss_dist, iter_idx)
-        tensorboard.scalar_summary("train_loss_reg", train_loss_reg, iter_idx)
+            "train/loss_bin_seg", train_loss_bin_seg, iter_idx)
+        tensorboard.scalar_summary("train/loss_var", train_loss_var, iter_idx)
+        tensorboard.scalar_summary(
+            "train/loss_dist", train_loss_dist, iter_idx)
+        tensorboard.scalar_summary("train/loss_reg", train_loss_reg, iter_idx)
+        tensorboard.scalar_summary("hyper_param/lr", lr, iter_idx)
 
     progressbar.close()
     # tensorboard.writer.flush()
@@ -210,23 +212,23 @@ def val(epoch):
                 tensorboard.image_summary(
                     "img_{}".format(batch_idx), display_imgs, epoch)
 
-            val_loss += loss.item()
-            val_loss_bin_seg += seg_loss.item()
-            val_loss_var += var_loss.item()
-            val_loss_dist += dist_loss.item()
-            val_loss_reg += reg_loss.item()
+            val_loss = loss.item()
+            val_loss_bin_seg = seg_loss.item()
+            val_loss_var = var_loss.item()
+            val_loss_dist = dist_loss.item()
+            val_loss_reg = reg_loss.item()
 
             progressbar.set_description(
                 "batch loss: {:.3f}".format(loss.item()))
             progressbar.update(1)
-
+    iter_idx = epoch * len(train_loader)
     progressbar.close()
-    tensorboard.scalar_summary("val_loss", val_loss, epoch)
-    tensorboard.scalar_summary("val_loss_bin_seg", val_loss_bin_seg, epoch)
-    tensorboard.scalar_summary("val_loss_var", val_loss_var, epoch)
-    tensorboard.scalar_summary("val_loss_dist", val_loss_dist, epoch)
-    tensorboard.scalar_summary("val_loss_reg", val_loss_reg, epoch)
-    tensorboard.writer.flush()
+    tensorboard.scalar_summary("val/loss", val_loss, iter_idx)
+    tensorboard.scalar_summary("val/loss_bin_seg", val_loss_bin_seg, iter_idx)
+    tensorboard.scalar_summary("val/loss_var", val_loss_var, iter_idx)
+    tensorboard.scalar_summary("val/loss_dist", val_loss_dist, iter_idx)
+    tensorboard.scalar_summary("val/loss_reg", val_loss_reg, iter_idx)
+    # tensorboard.writer.flush()
 
     print("------------------------\n")
     if val_loss < best_val_loss:
@@ -254,7 +256,7 @@ def main():
 
     for epoch in range(start_epoch, 100):
         train(epoch)
-        if epoch % 2 == 0:
+        if epoch % 1 == 0 or epoch == 0:
             print("\nValidation For Experiment: ", exp_dir)
             print(time.strftime('%H:%M:%S', time.localtime()))
             val(epoch)
