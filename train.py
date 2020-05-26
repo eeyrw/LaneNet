@@ -118,7 +118,7 @@ def train(epoch):
         lr = optimizer.param_groups[0]['lr']
         tensorboard.scalar_summary("train_loss", train_loss, iter_idx)
         tensorboard.scalar_summary(
-            "train_loss_bin_seg", train_loss_bin_seg, epoch)
+            "train_loss_bin_seg", train_loss_bin_seg, iter_idx)
         tensorboard.scalar_summary("train_loss_var", train_loss_var, iter_idx)
         tensorboard.scalar_summary("train_loss_dist", train_loss_dist, iter_idx)
         tensorboard.scalar_summary("train_loss_reg", train_loss_reg, iter_idx)
