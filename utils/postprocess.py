@@ -23,7 +23,7 @@ def embedding_post_process(embedding, bin_seg, band_width=1.5, max_num_lane=4):
         return cluster_result
 
     # clusterObj = MeanShift(bandwidth=1.5, bin_seeding=True, n_jobs=-1).fit(cluster_list)
-    clusterObj = DBSCAN(eps=0.3, min_samples=10).fit(cluster_list)
+    clusterObj = DBSCAN(eps=0.1, min_samples=20).fit(cluster_list)
 
     labels = clusterObj.labels_
     cluster_result[bin_seg>0] = labels + 1
