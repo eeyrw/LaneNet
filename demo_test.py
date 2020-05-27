@@ -61,6 +61,7 @@ def main():
     binary_seg = output['binary_seg']
     bin_seg_prob = binary_seg.detach().cpu().numpy()
     bin_seg_pred = np.argmax(bin_seg_prob, axis=1)[0]
+    cv2.imwrite("demo/demo_seg.png", bin_seg_pred*255)
 
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     seg_img = np.zeros_like(img)

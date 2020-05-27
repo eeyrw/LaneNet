@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.cluster import MeanShift, estimate_bandwidth
-
+from sklearn.cluster import DBSCAN
 
 def embedding_post_process(embedding, bin_seg, band_width=1.5, max_num_lane=4):
     """
@@ -22,10 +22,10 @@ def embedding_post_process(embedding, bin_seg, band_width=1.5, max_num_lane=4):
     if len(cluster_list)==0:
         return cluster_result
 
-    mean_shift = MeanShift(bandwidth=1.5, bin_seeding=True, n_jobs=-1)
-    mean_shift.fit(cluster_list)
+    # clusterObj = MeanShift(bandwidth=1.5, bin_seeding=True, n_jobs=-1).fit(cluster_list)
+    clusterObj = DBSCAN(eps=0.3, min_samples=10).fit(cluster_list)
 
-    labels = mean_shift.labels_
+    labels = clusterObj.labels_
     cluster_result[bin_seg>0] = labels + 1
 
     cluster_result[cluster_result > max_num_lane] = 0
