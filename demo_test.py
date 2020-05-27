@@ -15,6 +15,20 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+def visualizeEmbedding(embedding):
+    # shape:(1, 4, 288, 800)
+    embedding= embedding[0]
+    maxV = embedding.max()
+    minV = embedding.min()
+    embedding = (embedding-minV)/(maxV-minV)
+    color = np.array([[255, 125, 0], [0, 255, 0], [0, 0, 255], [0, 255, 255]], dtype='float')
+    darkGroundImage = np.zeros((embedding.shape[1],embedding.shape[2],3),dtype='uint8') # HWC
+    for i, embeddingLayer in enumerate(embedding):
+        #colorMap = [(color*i/256).astype(np.uint8) for i in range(256)]
+        layer = cv2.applyColorMap((embeddingLayer*255).astype(np.uint8),cv2.COLORMAP_JET)
+        #darkGroundImage = cv2.addWeighted(src1=darkGroundImage, alpha=0.3, src2=layer, beta=1., gamma=0.)
+        cv2.imwrite("demo/embedding_%d.png"%i, layer)        
+    
 
 def main():
     args = parse_args()
@@ -42,6 +56,7 @@ def main():
     output = net(x)
     embedding = output['embedding']
     embedding = embedding.detach().cpu().numpy()
+    visualizeEmbedding(embedding)
     embedding = np.transpose(embedding[0], (1, 2, 0))
     binary_seg = output['binary_seg']
     bin_seg_prob = binary_seg.detach().cpu().numpy()
